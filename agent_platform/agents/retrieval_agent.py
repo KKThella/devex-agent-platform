@@ -1,5 +1,6 @@
 """RetrievalAgent — finds candidate tools via RAG + LLM."""
 import json
+from typing import List, Optional, Dict
 from dataclasses import dataclass
 from agent_platform.llm.client import call_claude
 from agent_platform.llm.prompts import RETRIEVAL_AGENT_SYSTEM
@@ -16,7 +17,7 @@ class Candidate:
 
 @dataclass
 class RetrievalResult:
-    candidates: list[Candidate]
+    candidates: List[Candidate]
     query_intent: str
     latency_ms: float
 
@@ -30,7 +31,7 @@ class RetrievalAgent:
     def __init__(self, rag_retriever=None):
         self.rag = rag_retriever  # injected — None = LLM-only mode
 
-    def run(self, query: str, context: dict | None = None) -> RetrievalResult:
+    def run(self, query: str, context: Optional[Dict] = None) -> RetrievalResult:
         """Retrieve candidates for a developer query."""
         context = context or {}
 

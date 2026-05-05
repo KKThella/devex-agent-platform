@@ -1,4 +1,5 @@
 """DevEx Agent SDK — the public interface developers import."""
+from typing import Optional, List, Dict
 from dataclasses import dataclass
 from agent_platform.agents.orchestrator import Orchestrator, AgentResponse
 from agent_platform.llm.nl_parser import parse_query
@@ -14,7 +15,7 @@ class RecommendationResult:
     reasoning: str
     tradeoffs: str
     getting_started: str
-    alternatives: list[dict]
+    alternatives: List[Dict]
     avoid: str
     latency_ms: float
     session_id: str
@@ -39,8 +40,8 @@ class DevExAgent:
         semantic_memory = SemanticMemory(persist_dir=persist_dir)
         self.orchestrator = Orchestrator(rag_retriever=rag, semantic_memory=semantic_memory)
 
-    def recommend(self, query: str, stack: list[str] | None = None,
-                  constraints: list[str] | None = None) -> RecommendationResult:
+    def recommend(self, query: str, stack: Optional[List[str]] = None,
+                  constraints: Optional[List[str]] = None) -> RecommendationResult:
         """
         Get a tool recommendation for a developer query.
 
@@ -83,7 +84,7 @@ class DevExAgent:
             session_id=self.session_id,
         )
 
-    def history(self) -> list[dict]:
+    def history(self) -> List[Dict]:
         """Return session interaction history."""
         return self.orchestrator.episodic.get_context(self.session_id)
 

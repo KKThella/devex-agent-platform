@@ -1,5 +1,6 @@
 """RAG Retriever — ChromaDB-backed semantic search over developer knowledge base."""
 import chromadb
+from typing import Optional, List, Dict
 from chromadb.utils import embedding_functions
 from agent_platform.rag.knowledge_base import KNOWLEDGE_BASE
 
@@ -35,7 +36,7 @@ class RAGRetriever:
             )
             print(f"Seeded {len(KNOWLEDGE_BASE)} documents.")
 
-    def search(self, query: str, top_k: int = 5, category: str | None = None) -> list[dict]:
+    def search(self, query: str, top_k: int = 5, category: Optional[str] = None) -> List[Dict]:
         """Return top_k most relevant knowledge base entries for query."""
         where = {"category": category} if category else None
         results = self.collection.query(
@@ -52,7 +53,7 @@ class RAGRetriever:
             })
         return docs
 
-    def add_document(self, text: str, metadata: dict, doc_id: str | None = None):
+    def add_document(self, text: str, metadata: Dict, doc_id: Optional[str] = None):
         """Add a new document to the knowledge base (team decision, ADR, etc)."""
         import uuid
         doc_id = doc_id or str(uuid.uuid4())

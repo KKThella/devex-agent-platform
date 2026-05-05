@@ -2,6 +2,7 @@
 import os
 import time
 import httpx
+from typing import Tuple
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +11,7 @@ API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-sonnet-4-6"
 
 
-def call_claude(system: str, user: str, max_tokens: int = 1024) -> tuple[str, float]:
+def call_claude(system: str, user: str, max_tokens: int = 1024) -> Tuple[str, float]:
     """Call Claude and return (content, latency_ms)."""
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:

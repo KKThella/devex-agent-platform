@@ -1,5 +1,6 @@
 """RankingAgent — re-ranks candidates and produces final recommendation."""
 import json
+from typing import List, Optional, Dict
 from dataclasses import dataclass
 from agent_platform.llm.client import call_claude
 from agent_platform.llm.prompts import RANKING_AGENT_SYSTEM
@@ -25,7 +26,7 @@ class Alternative:
 @dataclass
 class RankingResult:
     recommendation: Recommendation
-    alternatives: list[Alternative]
+    alternatives: List[Alternative]
     avoid: str
     latency_ms: float
 
@@ -36,7 +37,7 @@ class RankingAgent:
     Produces a final recommendation with tradeoffs and alternatives.
     """
 
-    def run(self, retrieval: RetrievalResult, context: dict | None = None) -> RankingResult:
+    def run(self, retrieval: RetrievalResult, context: Optional[Dict] = None) -> RankingResult:
         """Rank candidates and return best recommendation."""
         context = context or {}
 

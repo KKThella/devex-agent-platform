@@ -1,5 +1,6 @@
 """Orchestrator — coordinates RetrievalAgent → RankingAgent pipeline."""
 import time
+from typing import Optional, Dict
 from dataclasses import dataclass
 from agent_platform.agents.retrieval_agent import RetrievalAgent, RetrievalResult
 from agent_platform.agents.ranking_agent import RankingAgent, RankingResult
@@ -32,7 +33,7 @@ class Orchestrator:
         self.semantic_memory = semantic_memory
         self.metrics = MetricsCollector()
 
-    def recommend(self, query: str, context: dict | None = None, session_id: str = "default") -> AgentResponse:
+    def recommend(self, query: str, context: Optional[Dict] = None, session_id: str = "default") -> AgentResponse:
         """Run the full agent pipeline for a developer query."""
         context = context or {}
         start = time.perf_counter()

@@ -1,6 +1,7 @@
 """Semantic memory — long-term, persistent, vector-backed memory."""
 import uuid
 import chromadb
+from typing import Optional, Dict, List
 from chromadb.utils import embedding_functions
 from datetime import datetime
 
@@ -24,7 +25,7 @@ class SemanticMemory:
             metadata={"hnsw:space": "cosine"},
         )
 
-    def store(self, text: str, metadata: dict | None = None):
+    def store(self, text: str, metadata: Optional[Dict] = None):
         """Persist a recommendation or decision to long-term memory."""
         metadata = metadata or {}
         metadata["stored_at"] = datetime.utcnow().isoformat()
@@ -34,7 +35,7 @@ class SemanticMemory:
             ids=[str(uuid.uuid4())],
         )
 
-    def recall(self, query: str, top_k: int = 3) -> list[dict]:
+    def recall(self, query: str, top_k: int = 3) -> List[Dict]:
         """Retrieve semantically similar past decisions."""
         if self.collection.count() == 0:
             return []

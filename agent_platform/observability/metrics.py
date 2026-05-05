@@ -1,5 +1,6 @@
 """Metrics collector — tracks latency, confidence, errors, and DORA signals."""
 import json
+from typing import List, Dict
 from datetime import datetime
 from pathlib import Path
 
@@ -16,9 +17,9 @@ class MetricsCollector:
     """
 
     def __init__(self):
-        self._requests: list[dict] = []
-        self._errors: list[dict] = []
-        self._deployments: list[dict] = []
+        self._requests: List[Dict] = []
+        self._errors: List[Dict] = []
+        self._deployments: List[Dict] = []
         self._load_persisted()
 
     def record(self, query: str, latency_ms: float, retrieval_latency_ms: float,
@@ -57,7 +58,7 @@ class MetricsCollector:
         })
         self._persist()
 
-    def summary(self) -> dict:
+    def summary(self) -> Dict:
         """Compute current metrics summary."""
         total = len(self._requests)
         errors = len(self._errors)
