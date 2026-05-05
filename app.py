@@ -175,15 +175,18 @@ st.divider()
 # ── Input form ────────────────────────────────────────────────────────────────
 col_input, col_options = st.columns([3, 2])
 
+# Set the widget key value BEFORE rendering so Streamlit persists it across reruns
+if st.session_state.prefill_query:
+    st.session_state["text_area_query"] = st.session_state.prefill_query
+    st.session_state.prefill_query = ""
+
 with col_input:
     user_query = st.text_area(
         "What are you trying to solve?",
-        value=st.session_state.prefill_query,
         placeholder="e.g. We're a 5-person Python team, need to add observability to our FastAPI service without a big ops burden",
         height=100,
+        key="text_area_query",
     )
-    # Clear prefill after widget renders so it doesn't persist across reruns
-    st.session_state.prefill_query = ""
 
 with col_options:
     selected_stack = st.multiselect(
