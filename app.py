@@ -106,8 +106,12 @@ if "prefill_query" not in st.session_state:
 def load_platform():
     from agent_platform.agents.orchestrator import Orchestrator
     from agent_platform.llm.nl_parser import NLParser
-    from agent_platform.rag.retriever import RAGRetriever
-    return Orchestrator(), NLParser(), RAGRetriever()
+    try:
+        from agent_platform.rag.retriever import RAGRetriever
+        rag = RAGRetriever()
+    except Exception:
+        rag = None  # LLM-only mode if ChromaDB unavailable
+    return Orchestrator(), NLParser(), rag
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
