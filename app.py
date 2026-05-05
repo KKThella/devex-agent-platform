@@ -322,8 +322,8 @@ if run_btn and user_query.strip():
         total_ms = (time.time() - t0) * 1000
 
         if success:
-            rec = result.recommendation
-            alts = result.alternatives or []
+            rec = result.ranking.recommendation
+            alts = result.ranking.alternatives or []
 
             step3.markdown(f"""
             <div class="step-card done">
@@ -372,9 +372,9 @@ if run_btn and user_query.strip():
                         st.markdown(f"**#{alt.rank} {alt.name}**")
                         st.caption(alt.when_to_choose)
 
-            if hasattr(result, "avoid") and result.avoid:
+            if hasattr(result.ranking, "avoid") and result.ranking.avoid:
                 st.markdown("**Avoid**")
-                st.error(result.avoid)
+                st.error(result.ranking.avoid)
 
             # ── Log to session history ─────────────────────────────────────
             st.session_state.history.append({
