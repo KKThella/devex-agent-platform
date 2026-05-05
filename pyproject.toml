@@ -31,6 +31,10 @@ devex = "cli.main:app"
 [project.optional-dependencies]
 dev = ["ruff", "mypy", "pytest-cov"]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agent_platform*", "cli*", "sdk*"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"
