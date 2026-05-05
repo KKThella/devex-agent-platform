@@ -30,8 +30,17 @@ class Orchestrator:
         self.retrieval_agent = RetrievalAgent(rag_retriever=rag_retriever)
         self.ranking_agent = RankingAgent()
         self.episodic = EpisodicMemory()
-        self.semantic_memory = semantic_memory
+        # SemanticMemory is optional — if it fails to initialize, continue without it
+        self.semantic_memory = semantic_memory if semantic_memory is not None else self._init_semantic_memory()
         self.metrics = MetricsCollector()
+
+    def _init_semantic_memory(self):
+        """Initialize SemanticMemory, gracefully degrade if ChromaDB unavailable."""
+        try:
+            from agent_platform.memory.semantic import SemanticMemory
+            return SemanticMemory()
+        except Exception:
+            return None
 
     def recommend(self, query: str, context: Optional[Dict] = None, session_id: str = "default") -> AgentResponse:
         """Run the full agent pipeline for a developer query."""

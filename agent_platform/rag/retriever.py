@@ -3,7 +3,7 @@ import os
 import tempfile
 import chromadb
 from typing import Optional, List, Dict
-from chromadb.utils import embedding_functions
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 from agent_platform.rag.knowledge_base import KNOWLEDGE_BASE
 
 
@@ -23,7 +23,7 @@ class RAGRetriever:
             persist_dir = os.path.join(tempfile.gettempdir(), "chroma_db")
         
         self.client = chromadb.PersistentClient(path=persist_dir)
-        self.ef = embedding_functions.DefaultEmbeddingFunction()
+        self.ef = DefaultEmbeddingFunction()
         self.collection = self.client.get_or_create_collection(
             name=COLLECTION_NAME,
             embedding_function=self.ef,

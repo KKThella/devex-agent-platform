@@ -106,12 +106,23 @@ if "prefill_query" not in st.session_state:
 def load_platform():
     from agent_platform.agents.orchestrator import Orchestrator
     from agent_platform.llm.nl_parser import NLParser
+
+    # Initialize RAGRetriever with graceful fallback
+    rag = None
     try:
         from agent_platform.rag.retriever import RAGRetriever
         rag = RAGRetriever()
-    except Exception:
-        rag = None  # LLM-only mode if ChromaDB unavailable
-    return Orchestrator(), NLParser(), rag
+    except Exception as e:
+        st.warning(f"ChromaDB unavailable: {str(e)[:100]}. Running in LLM-only mode.")
+
+    # Initialize Orchestrator, which will also attempt SemanticMemory init
+    try:
+        orchestrator = Orchestrator(rag_retriever=rag)
+    except Exception as e:
+        st.error(f"Failed to initialize Orchestrator: {str(e)}")
+        st.stop()
+
+    return orchestrator, NLParser(), rag
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────

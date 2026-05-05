@@ -36,8 +36,21 @@ class DevExAgent:
 
     def __init__(self, session_id: str = "default", persist_dir: str = "./chroma_db"):
         self.session_id = session_id
-        rag = RAGRetriever(persist_dir=persist_dir)
-        semantic_memory = SemanticMemory(persist_dir=persist_dir)
+
+        # Initialize RAGRetriever with graceful fallback
+        rag = None
+        try:
+            rag = RAGRetriever(persist_dir=persist_dir)
+        except Exception:
+            rag = None  # LLM-only mode if ChromaDB unavailable
+
+        # Initialize SemanticMemory with graceful fallback
+        semantic_memory = None
+        try:
+            semantic_memory = SemanticMemory(persist_dir=persist_dir)
+        except Exception:
+            semantic_memory = None  # Continue without persistent memory
+
         self.orchestrator = Orchestrator(rag_retriever=rag, semantic_memory=semantic_memory)
 
     def recommend(self, query: str, stack: Optional[List[str]] = None,

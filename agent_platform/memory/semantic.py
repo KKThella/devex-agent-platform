@@ -4,7 +4,7 @@ import uuid
 import tempfile
 import chromadb
 from typing import Optional, Dict, List
-from chromadb.utils import embedding_functions
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 from datetime import datetime
 
 
@@ -24,7 +24,7 @@ class SemanticMemory:
             persist_dir = os.path.join(tempfile.gettempdir(), "chroma_db")
         
         self.client = chromadb.PersistentClient(path=persist_dir)
-        self.ef = embedding_functions.DefaultEmbeddingFunction()
+        self.ef = DefaultEmbeddingFunction()
         self.collection = self.client.get_or_create_collection(
             name=MEMORY_COLLECTION,
             embedding_function=self.ef,
