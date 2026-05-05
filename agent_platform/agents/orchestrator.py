@@ -1,6 +1,6 @@
 """Orchestrator — coordinates RetrievalAgent → RankingAgent pipeline."""
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from agent_platform.agents.retrieval_agent import RetrievalAgent, RetrievalResult
 from agent_platform.agents.ranking_agent import RankingAgent, RankingResult
 from agent_platform.memory.episodic import EpisodicMemory

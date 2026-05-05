@@ -1,7 +1,4 @@
 """Tests for RAG retriever (uses in-memory ChromaDB — no disk)."""
-import pytest
-import chromadb
-from unittest.mock import patch, MagicMock
 from agent_platform.rag.knowledge_base import KNOWLEDGE_BASE
 
 

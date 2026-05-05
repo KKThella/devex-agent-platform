@@ -1,5 +1,4 @@
 """Tests for episodic and semantic memory."""
-import pytest
 from agent_platform.memory.episodic import EpisodicMemory
 
 

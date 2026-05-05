@@ -1,10 +1,8 @@
 """Tests for agent logic (mocked LLM — no API key needed)."""
-import pytest
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from agent_platform.agents.retrieval_agent import RetrievalAgent, Candidate
 from agent_platform.agents.ranking_agent import RankingAgent
-from agent_platform.memory.episodic import EpisodicMemory
 
 
 MOCK_RETRIEVAL_RESPONSE = json.dumps({

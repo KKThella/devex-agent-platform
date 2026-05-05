@@ -1,8 +1,6 @@
 """Metrics collector — tracks latency, confidence, errors, and DORA signals."""
 import json
-import time
-from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 
@@ -72,7 +70,8 @@ class MetricsCollector:
         latencies_sorted = sorted(latencies)
 
         def percentile(data, p):
-            if not data: return 0
+            if not data:
+                return 0
             idx = int(len(data) * p / 100)
             return data[min(idx, len(data)-1)]
 
@@ -102,15 +101,15 @@ class MetricsCollector:
         if "status" in s:
             return "# No data\n"
         lines = [
-            f"# HELP devex_request_total Total recommendation requests",
+            "# HELP devex_request_total Total recommendation requests",
             f"devex_request_total {s['request_count']}",
-            f"# HELP devex_error_total Total failed requests",
+            "# HELP devex_error_total Total failed requests",
             f"devex_error_total {s['error_count']}",
-            f"# HELP devex_latency_p99_ms 99th percentile latency",
+            "# HELP devex_latency_p99_ms 99th percentile latency",
             f"devex_latency_p99_ms {s['latency_p99_ms']}",
-            f"# HELP devex_confidence_avg Average recommendation confidence",
+            "# HELP devex_confidence_avg Average recommendation confidence",
             f"devex_confidence_avg {s['confidence_avg']}",
-            f"# HELP devex_change_failure_rate DORA change failure rate",
+            "# HELP devex_change_failure_rate DORA change failure rate",
             f"devex_change_failure_rate {s['dora']['change_failure_rate_pct']}",
         ]
         return "\n".join(lines) + "\n"
