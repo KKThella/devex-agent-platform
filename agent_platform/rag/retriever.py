@@ -1,4 +1,6 @@
 """RAG Retriever — ChromaDB-backed semantic search over developer knowledge base."""
+import os
+import tempfile
 import chromadb
 from typing import Optional, List, Dict
 from chromadb.utils import embedding_functions
@@ -15,7 +17,11 @@ class RAGRetriever:
     Swap to Pinecone for production scale.
     """
 
-    def __init__(self, persist_dir: str = "./chroma_db"):
+    def __init__(self, persist_dir: str = None):
+        # Use tempfile on Streamlit Cloud, allow override for local testing
+        if persist_dir is None:
+            persist_dir = os.path.join(tempfile.gettempdir(), "chroma_db")
+        
         self.client = chromadb.PersistentClient(path=persist_dir)
         self.ef = embedding_functions.DefaultEmbeddingFunction()
         self.collection = self.client.get_or_create_collection(

@@ -11,6 +11,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def get_api_key():
+    """Get API key from Streamlit secrets (Cloud) or environment (local)."""
+    try:
+        return st.secrets.get("ANTHROPIC_API_KEY", "")
+    except Exception:
+        return os.getenv("ANTHROPIC_API_KEY", "")
+
+
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="DevEx Agent Platform",
@@ -108,11 +117,11 @@ with st.sidebar:
     st.divider()
 
     # API key check
-    api_key = os.getenv("ANTHROPIC_API_KEY", "")
+    api_key = get_api_key()
     if api_key and api_key.startswith("sk-"):
         st.success("✅ API key connected", icon="🔑")
     else:
-        st.error("⚠️ No API key found. Add ANTHROPIC_API_KEY to .env")
+        st.error("⚠️ No API key found. Add ANTHROPIC_API_KEY to .env or Streamlit secrets")
         st.stop()
 
     st.divider()

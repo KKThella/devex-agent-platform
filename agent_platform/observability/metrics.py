@@ -1,11 +1,15 @@
 """Metrics collector — tracks latency, confidence, errors, and DORA signals."""
+import os
 import json
+import tempfile
 from typing import List, Dict
 from datetime import datetime
 from pathlib import Path
 
 
-METRICS_FILE = Path("./metrics_store.json")
+def get_metrics_file():
+    """Get metrics file path, using tempfile on Streamlit Cloud."""
+    return Path(os.path.join(tempfile.gettempdir(), "metrics_store.json"))
 
 
 class MetricsCollector:
@@ -117,7 +121,8 @@ class MetricsCollector:
 
     def _persist(self):
         try:
-            METRICS_FILE.write_text(json.dumps({
+            metrics_file = get_metrics_file()
+            metrics_file.write_text(json.dumps({
                 "requests": self._requests[-1000:],
                 "errors": self._errors[-200:],
                 "deployments": self._deployments,
@@ -126,9 +131,10 @@ class MetricsCollector:
             pass
 
     def _load_persisted(self):
-        if METRICS_FILE.exists():
+        metrics_file = get_metrics_file()
+        if metrics_file.exists():
             try:
-                data = json.loads(METRICS_FILE.read_text())
+                data = json.loads(metrics_file.read_text())
                 self._requests = data.get("requests", [])
                 self._errors = data.get("errors", [])
                 self._deployments = data.get("deployments", [])

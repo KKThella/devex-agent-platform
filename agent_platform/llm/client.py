@@ -2,6 +2,7 @@
 import os
 import time
 import httpx
+import streamlit as st
 from typing import Tuple
 from dotenv import load_dotenv
 
@@ -11,11 +12,19 @@ API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-sonnet-4-6"
 
 
+def get_api_key() -> str:
+    """Get API key from Streamlit secrets (Cloud) or environment (local)."""
+    try:
+        return st.secrets.get("ANTHROPIC_API_KEY", "")
+    except Exception:
+        return os.getenv("ANTHROPIC_API_KEY", "")
+
+
 def call_claude(system: str, user: str, max_tokens: int = 1024) -> Tuple[str, float]:
     """Call Claude and return (content, latency_ms)."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = get_api_key()
     if not api_key:
-        raise ValueError("ANTHROPIC_API_KEY not set in environment")
+        raise ValueError("ANTHROPIC_API_KEY not set in environment or Streamlit secrets")
 
     headers = {
         "Content-Type": "application/json",

@@ -1,5 +1,7 @@
 """Semantic memory — long-term, persistent, vector-backed memory."""
+import os
 import uuid
+import tempfile
 import chromadb
 from typing import Optional, Dict, List
 from chromadb.utils import embedding_functions
@@ -16,7 +18,11 @@ class SemanticMemory:
     Enables the agent to say 'your team previously chose X for similar reasons.'
     """
 
-    def __init__(self, persist_dir: str = "./chroma_db"):
+    def __init__(self, persist_dir: str = None):
+        # Use tempfile on Streamlit Cloud, allow override for local testing
+        if persist_dir is None:
+            persist_dir = os.path.join(tempfile.gettempdir(), "chroma_db")
+        
         self.client = chromadb.PersistentClient(path=persist_dir)
         self.ef = embedding_functions.DefaultEmbeddingFunction()
         self.collection = self.client.get_or_create_collection(
