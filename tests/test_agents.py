@@ -38,7 +38,7 @@ MOCK_RANKING_RESPONSE = json.dumps({
 })
 
 
-@patch("agent_platform.llm.client.call_claude")
+@patch("agent_platform.agents.retrieval_agent.call_claude")
 def test_retrieval_agent_returns_candidates(mock_claude):
     mock_claude.return_value = (MOCK_RETRIEVAL_RESPONSE, 450.0)
     agent = RetrievalAgent(rag_retriever=None)
@@ -49,7 +49,7 @@ def test_retrieval_agent_returns_candidates(mock_claude):
     assert result.query_intent == "Find best testing framework for async Python API"
 
 
-@patch("agent_platform.llm.client.call_claude")
+@patch("agent_platform.agents.ranking_agent.call_claude")
 def test_ranking_agent_returns_recommendation(mock_claude):
     mock_claude.return_value = (MOCK_RANKING_RESPONSE, 380.0)
 

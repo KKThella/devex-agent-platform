@@ -30,11 +30,13 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - run: pip install pytest pytest-cov pytest-asyncio ruff
-      - run: pip install --no-deps -e .
+      # Install only what the tests actually need — no heavy deps like chromadb/typer
+      - run: pip install pytest pytest-cov pytest-asyncio httpx python-dotenv
+      # Add repo root to path so `import agent_platform` resolves without packaging
       - run: pytest tests/ -v --cov=agent_platform --cov-report=xml
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONPATH: ${{ github.workspace }}
       - uses: codecov/codecov-action@v4
         with:
           file: coverage.xml
@@ -48,12 +50,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Compute lead time (PR open → merge)
+      - name: Compute lead time (PR open to merge)
         run: |
           MERGE_TIME=$(git log -1 --format=%ct)
-          PR_OPEN_TIME=$(git log --merges -1 --format=%ct HEAD~1)
-          LEAD_TIME_S=$((MERGE_TIME - PR_OPEN_TIME))
-          LEAD_TIME_H=$(echo "scale=1; $LEAD_TIME_S / 3600" | bc)
+          # Safely get last merge commit — default to same time if no merges exist
+          PR_OPEN_RAW=$(git log --merges -1 --format=%ct 2>/dev/null || echo "")
+          PR_OPEN_TIME=${PR_OPEN_RAW:-$MERGE_TIME}
+          LEAD_TIME_S=$(( MERGE_TIME - PR_OPEN_TIME ))
+          LEAD_TIME_H=$(awk "BEGIN {printf \"%.1f\", $LEAD_TIME_S / 3600}")
           echo "Lead time: ${LEAD_TIME_H}h"
           echo "DORA_LEAD_TIME_HOURS=${LEAD_TIME_H}" >> $GITHUB_ENV
       - name: Annotate workflow with DORA signal
