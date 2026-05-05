@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install ruff mypy
+      - run: ruff check .
+      - run: mypy agent_platform sdk cli --ignore-missing-imports
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/ -v --cov=agent_platform --cov-report=xml
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - uses: codecov/codecov-action@v4
+        with:
+          file: coverage.xml
+
+  dora-lead-time:
+    name: Track DORA Lead Time
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Compute lead time (PR open → merge)
+        run: |
+          MERGE_TIME=$(git log -1 --format=%ct)
+          PR_OPEN_TIME=$(git log --merges -1 --format=%ct HEAD~1)
+          LEAD_TIME_S=$((MERGE_TIME - PR_OPEN_TIME))
+          LEAD_TIME_H=$(echo "scale=1; $LEAD_TIME_S / 3600" | bc)
+          echo "Lead time: ${LEAD_TIME_H}h"
+          echo "DORA_LEAD_TIME_HOURS=${LEAD_TIME_H}" >> $GITHUB_ENV
+      - name: Annotate workflow with DORA signal
+        run: echo "::notice title=DORA Lead Time::${DORA_LEAD_TIME_HOURS}h from PR open to main merge"

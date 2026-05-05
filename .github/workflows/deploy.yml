@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Deploy (staging)
+        run: echo "Deploy to staging env here (Railway, Render, Fly.io, etc)"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Smoke test
+        run: python -c "from sdk.client import DevExAgent; print('Import OK')"
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e .
+      - name: Deploy (production)
+        run: echo "Deploy to production here"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+  dora-deployment-freq:
+    name: Track DORA Deployment Frequency
+    runs-on: ubuntu-latest
+    needs: deploy-prod
+    steps:
+      - name: Record successful deploy
+        run: |
+          echo "::notice title=DORA Deployment::Version ${{ github.ref_name }} deployed to production at $(date -u)"
