@@ -20,13 +20,13 @@
 > Ask anything in plain English — watch the multi-agent pipeline reason through it in real time.
 
 ### Landing — query input + example prompts
-![DevEx Agent Platform — Landing](docs/screenshots/screenshot-landing.png)
+![DevEx Agent Platform — Landing](docs/screenshots/Landing%20Page.png)
 
 ### Pipeline execution — 3-step agent reasoning in real time
-![DevEx Agent Platform — Pipeline](docs/screenshots/screenshot-pipeline.png)
+![DevEx Agent Platform — Pipeline](docs/screenshots/Pipeline%20Execution.png)
 
 ### Recommendation card — winner with confidence, tradeoffs, and alternatives
-![DevEx Agent Platform — Recommendation](docs/screenshots/screenshot-recommendation.png)
+![DevEx Agent Platform — Recommendation](docs/screenshots/Recommendation%20Card.png)
 
 | What you see | What's happening under the hood |
 |---|---|
